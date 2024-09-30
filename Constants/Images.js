@@ -17,6 +17,16 @@ const images = {
     wave1:require('../assets/images/wave1.png'),
     wave2:require('../assets/images/wave2.png'),
     celebrate:require('../assets/images/celebrate.png'),
+    logo:require('../assets/splash.png'),
+    bus_history: require('../assets/images/bus_history.png'),
+    location: require('../assets/images/location.png'),
+    destination: require('../assets/images/destination.png'),
+    ticket:require('../assets/images/ticket.png'),
+    time:require('../assets/images/time.png'),
+    money:require('../assets/images/money.png'),
+    coin:require('../assets/images/coin.png'),
+    calendar:require('../assets/images/calendar.png'),
+    edit:require('../assets/images/edit.png'),
   };
   
   export default images;

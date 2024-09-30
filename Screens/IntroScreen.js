@@ -84,7 +84,7 @@ const IntroScreen = () => {
                       x: (index + 1) * screenWidth,
                       animated: true,
                     })
-                  : navigation.navigate("HomeScreen")
+                  : navigation.navigate("LoginScreen")
               }
               style={styles.skip}
             >
@@ -108,7 +108,7 @@ const IntroScreen = () => {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => navigation.replace("HomeScreen")}
+          onPress={() => navigation.navigate("LoginScreen")}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Get Started</Text>

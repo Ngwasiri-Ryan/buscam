@@ -1,7 +1,10 @@
 const COLOR = {
     background: '#FFFFFF',     // Clean white background
-    primary: '#5E63FF',        // Your primary brand color
-    secondary: '#407BFF',      // A slightly lighter shade for accents
+   // primaryformer: '#5E63FF',        // Your primary brand color
+    //secondary: '#407BFF',
+    secondary: '#1E90FF',
+    primary: '#407BFF',
+    tetairy:'#029BC5' ,  // A slightly lighter shade for accents
     black: '#000000',          // Standard black for text
     buttonText: '#FFFFFF',     // White for button text
     success: '#28C76F',        // Green for success messages

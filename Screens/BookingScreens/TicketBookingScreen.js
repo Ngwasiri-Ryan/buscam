@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
   wave: {
     height: height * 0.4,
     width: width,
+    tintColor:COLOR.primary,
   },
   stepText: {
     color: "white",
