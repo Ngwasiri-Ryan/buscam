@@ -1,33 +1,51 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import React, { createContext, useState } from 'react';
+import { db } from '../Firebase/Firebase'; // Firebase config
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
-// Create a Context
+
+// Create UserContext
 export const UserContext = createContext();
 
-// Create a Provider component
+// UserProvider component to wrap your app and provide user data
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    username: '',
-    phoneNumber: '',
-    idCardNumber: '',
-  });
+  const [user, setUser] = useState(null); // User state to store current user data
 
-  const db = getFirestore();
+  // Fetch user data from Firestore by username using a query
+  const fetchUser = async (username) => {
+    try {
+      const q = query(collection(db, 'users'), where('username', '==', username)); // Query for the username
+      const querySnapshot = await getDocs(q);
 
-  // Function to fetch user data from Firestore and update the context
-  const fetchUserData = async (userId) => {
-    const userDocRef = doc(db, 'users', userId); // Assuming `userId` is the document ID
-    const docSnap = await getDoc(userDocRef);
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0]; // Get the first matched document
+        const userData = doc.data(); // Get the document's data
+        const userId = doc.id; // Get the document ID
 
-    if (docSnap.exists()) {
-      setUser(docSnap.data());
-    } else {
-      console.log('No such document!');
+        // Store the user's ID and data in the context
+        setUser({ ...userData, id: userId });
+      } else {
+        console.warn('No user data found');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
   };
 
+  // Update user data in context
+  const updateUser = (newUserData) => {
+    setUser((prevState) => ({
+      ...prevState,
+      ...newUserData, // Merge new data with existing user data
+    }));
+  };
+
+  // Clear user data (e.g., on logout)
+  const clearUser = () => {
+    setUser(null);
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, fetchUserData }}>
+    <UserContext.Provider value={{ user, setUser: updateUser, fetchUser, clearUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import {
   View,
   Text,
@@ -16,8 +16,10 @@ import { loginUser } from '../../backend/actions/auth';
 import MessageModal from '../../components/Modal/MessageModal'; 
 import COLOR from '../../Constants/Colors';
 import images from '../../Constants/Images';
+import { UserContext } from '../../backend/actions/UserContext';
 
 const LoginScreen = ({ navigation }) => {
+  const { setUser, fetchUser } = useContext(UserContext);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -27,11 +29,28 @@ const LoginScreen = ({ navigation }) => {
   const [modalType, setModalType] = useState('error');
 
   // Handle sign-in logic
+  // const handleSignIn = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await loginUser(username, password);
+  //         navigation.replace('HomeScreen');
+  //   } catch (error) {
+  //     setModalMessage(error.message);
+  //     setModalType('error');
+  //     setModalVisible(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSignIn = async () => {
     setLoading(true);
     try {
       const response = await loginUser(username, password);
-          navigation.replace('HomeScreen',{ username });
+      if (response.success) {
+        await fetchUser(username); // Fetch user data from Firestore
+        navigation.replace('HomeScreen'); // Navigate to home screen after login
+      }
     } catch (error) {
       setModalMessage(error.message);
       setModalType('error');

@@ -1,37 +1,91 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Footer from '../../components/ServiceComponents/Footer';
 import COLOR from '../../Constants/Colors';
 import images from '../../Constants/Images';
+import { UserContext } from '../../backend/actions/UserContext';
+import { db } from '../../backend/Firebase/Firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
-const EditProfileScreen = ({navigation,route}) => {
-  const [user, setUsername] = useState('');
-  const [phone, setPhoneNumber] = useState('');
-  const [idCardNumber, setIdCardNumber] = useState('');
+const EditProfileScreen = ({ navigation }) => {
+  const { user, setUser } = useContext(UserContext);
+  
+  // Track the original user data
+  const [originalUser, setOriginalUser] = useState(user);
+  
+  // Initialize state with user context data
+  const [username, setUsername] = useState(user?.username || '');
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
+  const [idCardNumber, setIdCardNumber] = useState(user?.idCardNumber || '');
 
-  const { username } = route.params;
-  const { phoneNumber } = route.params;
+  // Ref to check if user is editing
+  const isEditing = useRef(false);
 
-  const handleSave = () => {
+  // Save changes and update both Firestore and the user context
+  const handleSave = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'User ID is missing. Cannot update profile.');
+      return;
+    }
 
+    const updatedUser = {
+      username,
+      phoneNumber,
+      idCardNumber,
+    };
+
+    try {
+      // Update the user document in Firestore
+      const userDocRef = doc(db, 'users', user.id);
+      await updateDoc(userDocRef, updatedUser);
+
+      // Update user data in the context
+      setUser(updatedUser);
+
+      // Clear the text input fields after update
+      setUsername('');
+      setPhoneNumber('');
+      setIdCardNumber('');
+
+      // Optionally, show confirmation and navigate back
+      Alert.alert('Success', 'Profile updated successfully!');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      Alert.alert('Error', 'Failed to update profile.');
+    }
   };
+
+  useEffect(() => {
+    // Set the original user data only once
+    if (user && !isEditing.current) {
+      setOriginalUser(user);
+      setUsername(user.username);
+      setPhoneNumber(user.phoneNumber);
+      setIdCardNumber(user.idCardNumber || '');
+    }
+  }, [user]);
+
+  // Update isEditing ref on any input change
+  useEffect(() => {
+    isEditing.current = username !== originalUser.username || phoneNumber !== originalUser.phoneNumber || idCardNumber !== originalUser.idCardNumber;
+  }, [username, phoneNumber, idCardNumber]);
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLOR.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>
       </View>
 
-      <View style={{display:'flex', alignItems:'center',justifyContent:'center' }} >
-      <Image source={images.edit} style={styles.headerImage} />
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Image source={images.edit} style={styles.headerImage} />
       </View>
-     
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -41,7 +95,7 @@ const EditProfileScreen = ({navigation,route}) => {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            value={user}
+            value={username}
             onChangeText={setUsername}
           />
         </View>
@@ -52,7 +106,7 @@ const EditProfileScreen = ({navigation,route}) => {
           <TextInput
             style={styles.input}
             placeholder="Phone Number"
-            value={phone}
+            value={phoneNumber}
             onChangeText={setPhoneNumber}
             keyboardType="phone-pad"
           />
@@ -75,7 +129,7 @@ const EditProfileScreen = ({navigation,route}) => {
           <Text style={styles.saveButtonText}>Save Changes</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Footer/>
+      <Footer />
     </SafeAreaView>
   );
 };
@@ -89,11 +143,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-  },
-  backButton: {
-    position: 'absolute',
-    left: 15,
-    top: 15,
   },
   headerTitle: {
     fontSize: 24,

@@ -14,7 +14,6 @@ import CancelButton from '../../components/Buttons/CancelButton';
 import CustomModal from '../../components/Modal/CustomModal';
 import images from '../../Constants/Images';
 
-
 const { width, height } = Dimensions.get('window');
 
 const TravelRouteScreen = ({ navigation }) => {
@@ -25,7 +24,11 @@ const TravelRouteScreen = ({ navigation }) => {
 
   const handleNext = () => {
     if (origin && destination) {
-      navigation.navigate("TicketBookingScreen")
+      // Pass the origin and destination as route parameters
+      navigation.navigate("TicketBookingScreen", {
+        origin,
+        destination,
+      });
     } else {
       Alert.alert('Incomplete', 'Please fill in both fields.');
     }
@@ -56,7 +59,7 @@ const TravelRouteScreen = ({ navigation }) => {
               items={[
                 { label: 'Buea', value: 'buea' },
                 { label: 'Bamenda', value: 'bamenda' },
-                { label: 'Limbe', value: 'Limbe' },
+                { label: 'Limbe', value: 'limbe' },
                 { label: 'Yaounde', value: 'yaounde' },
               ]}
               setOpen={setOpenOrigin}
@@ -72,7 +75,7 @@ const TravelRouteScreen = ({ navigation }) => {
               items={[
                 { label: 'Buea', value: 'buea' },
                 { label: 'Bamenda', value: 'bamenda' },
-                { label: 'Limbe', value: 'Limbe' },
+                { label: 'Limbe', value: 'limbe' },
                 { label: 'Yaounde', value: 'yaounde' },
               ]}
               onSelect={setOrigin}
@@ -105,10 +108,10 @@ const TravelRouteScreen = ({ navigation }) => {
               onClose={() => setOpenDestination(false)}
               items={[
                 { label: 'Yaounde', value: 'yaounde' },
-                { label: 'Bamenda', value: 'bamenda'},
+                { label: 'Bamenda', value: 'bamenda' },
                 { label: 'Dschang', value: 'dschang' },
                 { label: 'Bafoussam', value: 'bafoussam' },
-                { label: 'Douala', value: 'Douala' },
+                { label: 'Douala', value: 'douala' },
               ]}
               onSelect={setDestination}
               placeholder="Select Destination"

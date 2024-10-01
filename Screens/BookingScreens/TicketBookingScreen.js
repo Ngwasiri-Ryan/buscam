@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const { width, height } = Dimensions.get("window");
 
-const TicketBookingScreen = ({ navigation }) => {
+const TicketBookingScreen = ({ navigation , route }) => {
   const [openBusAgency, setOpenBusAgency] = useState(false);
   const [busAgency, setBusAgency] = useState(null);
   const [openTravelTime, setOpenTravelTime] = useState(false);
@@ -26,6 +26,8 @@ const TicketBookingScreen = ({ navigation }) => {
   const [departureDate, setDepartureDate] = useState(null);
   const [openBusCategory, setOpenBusCategory] = useState(false);
   const [busCategory, setBusCategory] = useState(null);
+
+  const { origin, destination } = route.params;
 
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
@@ -43,8 +45,16 @@ const TicketBookingScreen = ({ navigation }) => {
   };
 
   const handleNext = () => {
-    navigation.navigate("InformationScreen");
-  };
+    // Navigate to InformationScreen and pass booking data as parameters
+    navigation.navigate("InformationScreen", { 
+      origin: origin,
+      destination: destination, 
+      busAgency, 
+      busCategory, 
+      numberOfTickets,
+      travelTime,
+      departureDate, });
+};
 
   return (
     <View style={styles.container}>
@@ -69,9 +79,10 @@ const TicketBookingScreen = ({ navigation }) => {
               open={openBusAgency}
               value={busAgency}
               items={[
-                { label: "Agency A", value: "agency_a" },
-                { label: "Agency B", value: "agency_b" },
-                { label: "Agency C", value: "agency_c" },
+                { label: "Musango", value: "musango" },
+                { label: "Amour Mezam", value: "amour mezam" },
+                { label: "Moghamo", value: "moghamoo" },
+                { label: "Fevor Travels", value: "fevor travels"},
               ]}
               setOpen={setOpenBusAgency}
               setValue={setBusAgency}
@@ -83,9 +94,10 @@ const TicketBookingScreen = ({ navigation }) => {
               visible={openBusAgency}
               onClose={() => setOpenBusAgency(false)}
               items={[
-                { label: "Agency A", value: "agency_a" },
-                { label: "Agency B", value: "agency_b" },
-                { label: "Agency C", value: "agency_c" },
+                { label: "Musango", value: "musango" },
+                { label: "Amour Mezam", value: "amour mezam" },
+                { label: "Moghamo", value: "moghamoo" },
+                { label: "Fevor Travels", value: "fevor travels"},
               ]}
               onSelect={setBusAgency}
               placeholder="Select Bus Agency"
@@ -191,17 +203,19 @@ const TicketBookingScreen = ({ navigation }) => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* Buttons at the Bottom */}
-        <View style={styles.buttonContainer}>
+    {/* Buttons at the Bottom */}
+     <View style={styles.buttonContainer}>
           <BackButton onPress={() => navigation.replace("ServiceScreen")} />
           <Button text="Next" onPress={handleNext} />
+        </View>
+          
         </View>
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -318,6 +332,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    top:40,
   },
   text: {
     fontWeight: 'bold',

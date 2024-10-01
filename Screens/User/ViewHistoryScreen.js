@@ -1,54 +1,32 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image , StyleSheet} from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import COLOR from '../../Constants/Colors';
 import images from '../../Constants/Images';
 import Footer from '../../components/ServiceComponents/Footer';
-
-const travelHistoryData = [
-  {
-    id: 1,
-    busAgency: 'Vatican Express',
-    travelDate: '2024-09-20',
-    destination: 'Yaoundé',
-    departure: 'Douala',
-    time: 'Day',
-    tickets: 2,
-    price: 15000,
-  },
-  {
-    id: 2,
-    busAgency: 'Amour Mezam',
-    travelDate: '2024-09-15',
-    destination: 'Buea',
-    time: 'Night',
-    departure: 'Limbe',
-    tickets: 1,
-    price: 7500,
-  },
-  {
-    id: 3,
-    busAgency: 'Musango',
-    travelDate: '2024-09-10',
-    destination: 'Garoua',
-    time: 'Afternoon',
-    departure: 'Maroua',
-    tickets: 3,
-    price: 22500,
-  },
-  // Add more sample data as needed
-];
-
-// Calculate total price
-const calculateTotalPrice = () => {
-  return travelHistoryData.reduce((total, travel) => total + travel.price, 0);
-};
+import { UserContext } from '../../backend/actions/UserContext';
+import { fetchUserBookings } from '../../backend/actions/history';
 
 const ViewHistoryScreen = () => {
   const navigation = useNavigation();
-  const totalPrice = calculateTotalPrice();
+  const { user } = useContext(UserContext); // Get user data from context
+  const [travelHistoryData, setTravelHistoryData] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    const loadUserBookings = async () => {
+      if (user && user.username) { // Ensure the user object and username exist
+        const bookings = await fetchUserBookings(user.username); // Fetch bookings using the username from context
+        setTravelHistoryData(bookings);
+        const total = bookings.reduce((acc, booking) => acc + booking.ticketPrice, 0); // Calculate total price
+        setTotalPrice(total);
+      }
+    };
+
+    loadUserBookings();
+  }, [user]);
 
   return (
     <View style={styles.container}>
@@ -58,22 +36,20 @@ const ViewHistoryScreen = () => {
         </TouchableOpacity>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle}>Travel History</Text>
- 
-    <View style={{justifyContent:'center', alignItems:'center', marginTop:30}}>
-    <Text style={{fontSize:16}}>You have spent a total of</Text>
-          <View style={styles.priceRow}>
-          <Image source={images.coin} size={30} color={COLOR.text} style={styles.smallMoney} />
-            <Text style={styles.totalPrice}>{totalPrice} FCFA</Text>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+            <Text style={{ fontSize: 16 }}>You have spent a total of</Text>
+            <View style={styles.priceRow}>
+              <Image source={images.coin} size={30} color={COLOR.text} style={styles.smallMoney} />
+              <Text style={styles.totalPrice}>{totalPrice} FCFA</Text>
+            </View>
           </View>
-          </View>
-          
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {travelHistoryData.map((travel) => (
           <TouchableOpacity key={travel.id} style={styles.eventContainer}>
-            <View style={styles.iconContainer}>
+          <View style={styles.iconContainer}>
               <Image source={images.bus_history} size={30} color={COLOR.text} style={styles.busIcon} />
             </View>
             <View style={styles.detailsContainer}>
@@ -83,18 +59,18 @@ const ViewHistoryScreen = () => {
               <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
                 <View style={styles.detailRow}>
                   <Image source={images.calendar} size={30} color={COLOR.text} style={styles.smallMoney} />
-                  <Text style={styles.date}>{travel.travelDate}</Text>
+                  <Text style={styles.date}>{travel.departureDate}</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Image source={images.time} size={30} color={COLOR.text} style={styles.smallMoney} />
-                  <Text>{travel.time}</Text>
+                  <Text>{travel.travelTime}</Text>
                 </View>
               </View>
 
               <View style={styles.routeContainer}>
                 <View style={styles.detailRow}>
                   <Image source={images.location} size={30} color={COLOR.text} style={styles.smallIcon} />
-                  <Text style={styles.departure}>{travel.departure} -</Text>
+                  <Text style={styles.departure}>{travel.origin} -</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Image source={images.destination} size={30} color={COLOR.text} style={styles.smallIcon} />
@@ -105,11 +81,11 @@ const ViewHistoryScreen = () => {
               <View style={styles.ticketContainer}>
                 <View style={styles.detailRow}>
                   <Image source={images.ticket} size={30} color={COLOR.text} style={styles.smallTicket} />
-                  <Text style={styles.tickets}>{travel.tickets}</Text>
+                  <Text style={styles.tickets}>{travel.numberOfTickets}</Text>
                 </View>
                 <View style={styles.detailRow}>
                   <Image source={images.money} size={30} color={COLOR.text} style={styles.smallMoney} />
-                  <Text style={styles.price}>{travel.price} FCFA</Text>
+                  <Text style={styles.price}>{travel.ticketPrice} FCFA</Text>
                 </View>
               </View>
             </View>

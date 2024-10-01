@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -11,27 +11,53 @@ import {
   Platform,
   ScrollView,
   Keyboard,
-} from 'react-native';
-import COLOR from '../../Constants/Colors';
-import Button from '../../components/Buttons/Button';
-import BackButton from '../../components/Buttons/BackButton';
-import images from '../../Constants/Images';
+} from "react-native";
+import { UserContext } from "../../backend/actions/UserContext";
+import COLOR from "../../Constants/Colors";
+import Button from "../../components/Buttons/Button";
+import BackButton from "../../components/Buttons/BackButton";
+import images from "../../Constants/Images";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-const InformationScreen = ({ navigation }) => {
-  const [fullName, setFullName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [idCardNumber, setIdCardNumber] = useState('');
+const InformationScreen = ({ navigation, route }) => {
+  const { user } = useContext(UserContext); // Access user data from UserContext
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [idCardNumber, setIdCardNumber] = useState("");
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
+  const {
+    origin,
+    destination,
+    busAgency,
+    busCategory,
+    numberOfTickets,
+    travelTime,
+    departureDate,
+  } = route.params;
+
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
+    if (user) {
+      setFullName(user.fullName || ""); 
+      setPhoneNumber(user.phoneNumber || ""); // Assuming user has a phoneNumber field
+      setIdCardNumber(user.idCardNumber || ""); // Assuming user has an idCardNumber field
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
 
     return () => {
       keyboardDidHideListener.remove();
@@ -41,17 +67,28 @@ const InformationScreen = ({ navigation }) => {
 
   const handleNext = () => {
     if (fullName && phoneNumber && idCardNumber) {
-      navigation.navigate('TicketSummaryScreen'); 
+      navigation.navigate("TicketSummaryScreen", {
+        fullName,
+        phoneNumber,
+        idCardNumber,
+        origin,
+        destination,
+        busAgency,
+        busCategory,
+        numberOfTickets,
+        travelTime,
+        departureDate,
+      });
     } else {
-      Alert.alert('Incomplete', 'Please fill in all the fields.');
+      Alert.alert("Incomplete", "Please fill in all the fields.");
     }
   };
 
   return (
     <View
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 20}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 20}
     >
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {/* Wave Image */}
@@ -83,9 +120,9 @@ const InformationScreen = ({ navigation }) => {
             {/* Input for Phone Number */}
             <Text>Phone Number</Text>
             <Text style={styles.text}>
-                Note: Please enter a valid number(Whatsapp) so we can contact you for your
-                ticket
-              </Text>
+              Note: Please enter a valid number(Whatsapp) so we can contact you
+              for your ticket
+            </Text>
             <View style={styles.phoneNumber}>
               <View style={styles.countryCode}>
                 <Text style={styles.countryCodeText}>+237</Text>
@@ -118,7 +155,7 @@ const InformationScreen = ({ navigation }) => {
       {/* Hide the Button Container when the keyboard is visible */}
       {!isKeyboardVisible && (
         <View style={styles.buttonContainer}>
-          <BackButton onPress={() => navigation.replace('ServiceScreen')} />
+          <BackButton onPress={() => navigation.replace("ServiceScreen")} />
           <Button text="Next" onPress={handleNext} />
         </View>
       )}
@@ -133,10 +170,10 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   imageContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     width: width,
     zIndex: 1,
@@ -148,10 +185,10 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   contentContainer: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   stepText: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
   },
   wave: {
@@ -161,60 +198,60 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 40,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   phoneInput: {
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     height: 50,
     paddingHorizontal: 10,
     marginBottom: 20,
-    width:'80%',
-    fontWeight: 'bold',
-    fontSize:15,
+    width: "80%",
+    fontWeight: "bold",
+    fontSize: 15,
     cursorColor: COLOR.primary,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     height: 50,
     paddingHorizontal: 10,
     marginBottom: 20,
-    fontWeight: 'bold',
-    fontSize:15,
+    fontWeight: "bold",
+    fontSize: 15,
     cursorColor: COLOR.primary,
   },
-  phoneNumber:{
-    display:'flex',
-    flexDirection:'row',
-    gap:5,
+  phoneNumber: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 5,
   },
-  countryCode:{
-     padding:10,
-     fontSize:13,
-     borderWidth:2,
-     height:50,
-     borderRadius: 8,
-     borderColor: '#ccc',
-     backgroundColor:'#F0F0F5',
+  countryCode: {
+    padding: 10,
+    fontSize: 13,
+    borderWidth: 2,
+    height: 50,
+    borderRadius: 8,
+    borderColor: "#ccc",
+    backgroundColor: "#F0F0F5",
   },
-  countryCodeText:{
-     color:'#ccc'
+  countryCodeText: {
+    color: "#ccc",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: COLOR.background,
   },
   text: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
 });

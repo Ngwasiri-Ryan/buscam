@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -10,14 +10,17 @@ import {
 } from "react-native";
 import images from "../Constants/Images";
 import COLOR from "../Constants/Colors";
+import { UserContext } from "../backend/actions/UserContext";
 
 const { width, height } = Dimensions.get("window");
 
-const HomeScreen = ({ navigation , route}) => {
-  const { username } = route.params;
+const HomeScreen = ({ navigation }) => {
+  const { user } = useContext(UserContext);
   const [activeSlide, setActiveSlide] = useState(0);
   const scrollViewRef = useRef(null);
-  const firstTwoLetters = username.slice(0, 2).toUpperCase();
+
+  // Extract first two letters of the username and convert to uppercase
+  const firstTwoLetters = user?.username?.slice(0, 2).toUpperCase() || '';
 
   const carouselItems = [
     {
@@ -48,10 +51,12 @@ const HomeScreen = ({ navigation , route}) => {
       {/* Profile Circle at Top-Left */}
       <TouchableOpacity
         style={styles.profileCircle}
-        onPress={() => navigation.navigate("ProfileScreen",{username})}
+        onPress={() => navigation.navigate("ProfileScreen")}
       >
-          <Text style={styles.profileText}>{firstTwoLetters}</Text>
+        {/* Display the first two letters in uppercase */}
+        <Text style={styles.profileText}>{firstTwoLetters}</Text>
       </TouchableOpacity>
+
       <View style={styles.back}>
         <View style={{ gap: 15, alignItems: "flex-end" }}>
           <Text style={styles.heading}>Get your bus rides</Text>

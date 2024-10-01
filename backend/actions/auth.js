@@ -10,7 +10,7 @@ import {
 import { db } from "../Firebase/Firebase";
 
 // Function to add a new user (used in signup)
-export const addUser = async (username, password, phoneNumber) => {
+export const addUser = async (username,phoneNumber, password ) => {
   try {
     const usersRef = collection(db, "users");
     // Check if a user with the same username already exists
@@ -24,8 +24,8 @@ export const addUser = async (username, password, phoneNumber) => {
     // If username does not exist, add a new user
     await addDoc(usersRef, {
       username,
-      password,
       phoneNumber,
+      password,
     });
     
     return { success: true, message: "User added successfully" };
