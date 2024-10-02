@@ -37,7 +37,7 @@ const Header = () => {
           <Text style={styles.greeting}>{getGreeting()}</Text>
         </View>
         <View style={styles.heading}>
-          <Image source={require("../../assets/splash.png")} style={styles.logo} />
+          <Image source={images.bus_history} style={styles.logo} />
           <Text style={styles.heroTitle}>Welcome to BusCam</Text>
         </View>
         

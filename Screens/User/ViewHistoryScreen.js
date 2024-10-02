@@ -48,22 +48,23 @@ const ViewHistoryScreen = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {travelHistoryData.map((travel) => (
-          <TouchableOpacity key={travel.id} style={styles.eventContainer}>
+          <View key={travel.id} style={styles.eventContainer}>
           <View style={styles.iconContainer}>
               <Image source={images.bus_history} size={30} color={COLOR.text} style={styles.busIcon} />
             </View>
-            <View style={styles.detailsContainer}>
-              <View style={styles.detailRow}>
+            <View style={styles.detailsContainer} >
+              <View style={{display:'flex',gap:60, alignItems:"center", flexDirection:'row'}}>
                 <Text style={styles.busAgency}>{travel.busAgency}</Text>
-              </View>
-              <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
                 <View style={styles.detailRow}>
                   <Image source={images.calendar} size={30} color={COLOR.text} style={styles.smallMoney} />
                   <Text style={styles.date}>{travel.departureDate}</Text>
                 </View>
+              </View>
+              <View style={{ display: 'flex', flexDirection: 'row', gap: 20,}}>
+                
                 <View style={styles.detailRow}>
                   <Image source={images.time} size={30} color={COLOR.text} style={styles.smallMoney} />
-                  <Text>{travel.travelTime}</Text>
+                  <Text style={styles.capitalize}>{travel.travelTime}</Text>
                 </View>
               </View>
 
@@ -90,7 +91,7 @@ const ViewHistoryScreen = () => {
               </View>
             </View>
             <MaterialIcons name="chevron-right" size={24} color={COLOR.secondaryText} />
-          </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
       <Footer />
@@ -174,6 +175,9 @@ const styles = StyleSheet.create({
     width: 25,
     marginRight: 10,
   },
+  capitalize:{
+    textTransform:'capitalize'
+  },
   smallTicket: {
     height: 20,
     width: 30,
@@ -182,6 +186,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1,
     justifyContent: 'center',
+    gap:5,
   },
   date: {
     fontSize: 12,
@@ -192,11 +197,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLOR.secondaryText,
     marginVertical: 2,
+    textTransform:'capitalize'
   },
   departure: {
     fontSize: 12,
     color: COLOR.secondaryText,
     marginVertical: 2,
+    textTransform:'capitalize'
   },
   routeContainer: {
     display: 'flex',
@@ -224,9 +231,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   busAgency: {
-    fontSize: 16,
+    fontSize: 19,
     color: COLOR.tetairy,
     fontWeight: 'bold',
+    textTransform:'capitalize'
   },
   detailRow: {
     flexDirection: 'row',

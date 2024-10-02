@@ -40,7 +40,11 @@ const PickupScreen = ({ navigation }) => {
   };
 
   const handleNext = () => {
-    navigation.navigate("PickUpInformationScreen");
+    navigation.navigate("PickUpInformationScreen", {
+      destination,
+      location,
+      pickupTime,
+    });
   };
 
   return (

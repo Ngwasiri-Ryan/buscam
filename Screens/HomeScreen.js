@@ -22,29 +22,29 @@ const HomeScreen = ({ navigation }) => {
   // Extract first two letters of the username and convert to uppercase
   const firstTwoLetters = user?.username?.slice(0, 2).toUpperCase() || '';
 
-  const carouselItems = [
-    {
-      avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-      name: "John Doe",
-      comment: "Great service! Had an amazing experience with the bus rides.",
-    },
-    {
-      avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-      name: "Jane Smith",
-      comment:
-        "Very reliable and comfortable buses. Would definitely recommend!",
-    },
-    {
-      avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-      name: "Mike Johnson",
-      comment: "Punctual and affordable! Highly satisfied with the service.",
-    },
-  ];
+  // const carouselItems = [
+  //   {
+  //     avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+  //     name: "John Doe",
+  //     comment: "Great service! Had an amazing experience with the bus rides.",
+  //   },
+  //   {
+  //     avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+  //     name: "Jane Smith",
+  //     comment:
+  //       "Very reliable and comfortable buses. Would definitely recommend!",
+  //   },
+  //   {
+  //     avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+  //     name: "Mike Johnson",
+  //     comment: "Punctual and affordable! Highly satisfied with the service.",
+  //   },
+  // ];
 
-  const handleScroll = (event) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setActiveSlide(slideIndex);
-  };
+  // const handleScroll = (event) => {
+  //   const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+  //   setActiveSlide(slideIndex);
+  // };
 
   return (
     <View style={styles.container}>
@@ -64,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <Image source={images.bus_img} style={styles.image} />
       </View>
-
+{/* 
       <View style={styles.carouselContainer}>
         <ScrollView
           ref={scrollViewRef}
@@ -82,7 +82,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
           ))}
         </ScrollView>
-      </View>
+      </View> */}
 
       {/* Get Started Button */}
       <View style={styles.buttonContainer}>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     width: 350,
     height: 300,
     position: "absolute",
-    top: height * 0.2,
+    top: height * 0.34,
   },
   profileCircle: {
     position: "absolute",
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   back: {
     backgroundColor: "#B3E5FC",
-    height: "40%",
+    height: "50%",
     width: "100%",
     position: "relative",
     paddingTop: 60,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     height: "10%",
     justifyContent: "center",
     alignItems: "center",
-    top: height * 0.19,
+    top: height * 0.25,
   },
   button: {
     width: width * 0.8,
@@ -259,13 +259,12 @@ const styles = StyleSheet.create({
     height: "10%",
     justifyContent: "center",
     alignItems: "center",
-    top: height * 0.18,
+    top: height * 0.28,
   },
   footerText: {
     fontSize: 16,
     color: COLOR.black,
     borderRadius: 30,
-    top: -10,
   },
 });
 

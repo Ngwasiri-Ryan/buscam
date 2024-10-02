@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -16,14 +16,30 @@ import COLOR from '../../Constants/Colors';
 import Button from '../../components/Buttons/Button';
 import BackButton from '../../components/Buttons/BackButton';
 import images from '../../Constants/Images';
+import { UserContext } from '../../backend/actions/UserContext';
 
 const { width, height } = Dimensions.get('window');
 
-const PickUpInformationScreen = ({ navigation }) => {
+const PickUpInformationScreen = ({ navigation , route }) => {
+  const { user } = useContext(UserContext);
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [idCardNumber, setIdCardNumber] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  const{
+    destination,
+    location,
+    pickupTime,
+  } = route.params;
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.fullName || ""); 
+      setPhoneNumber(user.phoneNumber || ""); // Assuming user has a phoneNumber field
+      setIdCardNumber(user.idCardNumber || ""); // Assuming user has an idCardNumber field
+    }
+  }, [user]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -41,7 +57,14 @@ const PickUpInformationScreen = ({ navigation }) => {
 
   const handleNext = () => {
     if (fullName && phoneNumber && idCardNumber) {
-      navigation.navigate('PickupSummaryScreen'); 
+      navigation.navigate('PickupSummaryScreen',{
+        fullName,
+        phoneNumber,
+        idCardNumber,
+        destination,
+        location,
+        pickupTime,
+      }); 
     } else {
       Alert.alert('Incomplete', 'Please fill in all the fields.');
     }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect} from "react";
 import {
   View,
   Text,
@@ -12,12 +12,43 @@ import Button from "../../components/Buttons/Button";
 import BackButton from "../../components/Buttons/BackButton";
 import CustomModal from "../../components/Modal/CustomModal";
 import images from "../../Constants/Images";
+import { UserContext } from "../../backend/actions/UserContext";
+import { addPickup } from "../../backend/actions/pickup";
+
+
+
 const { width, height } = Dimensions.get("window");
 
-const PickupSummaryScreen = ({ navigation }) => {
+const PickupSummaryScreen = ({ navigation , route}) => {
+
+  const { user } = useContext(UserContext); // Get user context
+  const {
+    fullName,
+    phoneNumber,
+    idCardNumber,
+    destination,
+    location,
+    pickupTime,
+  } = route.params;
+
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
+
+    const pickupData = {
+      username: user?.username, 
+      fullName,
+      phoneNumber,
+      idCardNumber,
+      destination,
+      location,
+      pickupTime,
+      createdAt: new Date(), 
+    };
+
+    // Add booking to Firestore
+    await addPickup(pickupData);
+    
     navigation.navigate("BookingSuccessScreen");
   };
 
@@ -44,49 +75,37 @@ const PickupSummaryScreen = ({ navigation }) => {
             {/**Travel Destination */}
             <View style={styles.input}>
               <Text style={styles.small}>Pickup Journey</Text>
-              <Text style={styles.large}>Buea - Bamenda</Text>
+              <Text style={styles.large}>{`${location} - ${destination}`}</Text>
             </View>
 
             {/**Travel Date and time */}
             <View style={styles.flex}>
               <View style={styles.inputFlex}>
-                <Text style={styles.small}>Pickup Date</Text>
-                <Text style={styles.large}>2024-08-2024</Text>
+                <Text style={styles.small}>Pickup Time</Text>
+                <Text style={styles.large}>{pickupTime}</Text>
               </View>
               <View style={styles.inputFlex}>
                 <Text style={styles.small}>Pickup Time</Text>
-                <Text style={styles.large}>24-08-2024</Text>
+                <Text style={styles.large}>{pickupTime}</Text>
               </View>
             </View>
 
             {/**Full Name */}
             <View style={styles.input}>
               <Text style={styles.small}>Full Name</Text>
-              <Text style={styles.large}>John Snow</Text>
+              <Text style={styles.large}>{fullName}</Text>
             </View>
 
             {/**Phone Number */}
             <View style={styles.input}>
               <Text style={styles.small}>Phone Number</Text>
-              <Text style={styles.large}>+237 67524524</Text>
+              <Text style={styles.large}>{phoneNumber}</Text>
             </View>
 
             {/**Phone Number */}
             <View style={styles.input}>
               <Text style={styles.small}>ID Card Number</Text>
-              <Text style={styles.large}>23456750</Text>
-            </View>
-
-            {/**Booking Fee*/}
-            <View style={styles.input}>
-              <Text style={styles.small}>Booking Fee</Text>
-              <Text style={styles.large}>500FCFA</Text>
-            </View>
-
-            {/**total cost*/}
-            <View style={styles.input}>
-              <Text style={styles.small}>*total cost</Text>
-              <Text style={styles.large}>6,500FCFA</Text>
+              <Text style={styles.large}>{idCardNumber}</Text>
             </View>
           </BlurView>
         </View>
